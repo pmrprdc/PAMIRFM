@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PAMIR.fm</title>
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            font-family: monospace;
+            overflow-x: hidden;
+            cursor: crosshair;
+            color: #fff;
+            perspective: 1000px;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .star {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100vh) translateX(0); opacity: 1; }
+            100% { transform: translateY(100vh) translateX(20px); opacity: 0; }
+        }
+
+        .floating-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .planet {
+            position: fixed;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff3366, #ff6b6b);
+            box-shadow: 0 0 50px rgba(255, 51, 102, 0.5);
+            animation: orbit 30s infinite linear;
+        }
+
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            50% { transform: translate(50vw, 50vh) rotate(180deg) scale(1.5); }
+            100% { transform: translate(100vw, 100vh) rotate(360deg) scale(1); }
+        }
+
+        .title {
+            font-size: 5em;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00ff;
+            margin: 1em 0;
+            transform: skew(-5deg);
+            animation: neon 1.5s infinite alternate;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+
+        @keyframes neon {
+            0% { 
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00ff;
+                transform: skew(-5deg) rotate(0deg);
+            }
+            100% { 
+                text-shadow: 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #00ffff;
+                transform: skew(-5deg) rotate(5deg);
+            }
+        }
+
+        .content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2em;
+            border-radius: 20px;
+            max-width: 600px;
+            margin: 1em;
+            transform: rotate(-1deg);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .content:hover {
+            transform: rotate(2deg) scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        button {
+            background: transparent;
+            border: 2px solid #fff;
+            color: #fff;
+            padding: 1em 2em;
+            font-size: 1.2em;
+            font-family: monospace;
+            cursor: pointer;
+            transform: rotate(2deg);
+            transition: all 0.3s;
+            margin: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: scale(1.1) rotate(-2deg);
+            background: rgba(255, 0, 255, 0.3);
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        .nav {
+            position: fixed;
+            bottom: 20px;
+            display: flex;
+            gap: 20px;
+            transform: rotate(-2deg);
+            z-index: 1000;
+        }
+
+        .nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2em;
+            padding: 0.5em 1em;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav a:hover {
+            transform: scale(1.1);
+            background: rgba(255, 0, 255, 0.3);
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        .ufo {
+            position: fixed;
+            font-size: 30px;
+            transition: all 0.5s ease-out;
+            z-index: 1000;
+            user-select: none;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.7));
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="starfield"></div>
+    <div class="floating-shapes" id="shapes"></div>
+    <div class="container">
+        <h1 class="title">PAMIR.fm</h1>
+        <div class="content">
+            <h2>Welcome to the cosmic corner of weirdness! 🚀✨</h2>
+            <p>Where space and funk collide in digital harmony.</p>
+            <button onclick="makeItWeirder()">Make it WEIRDER!</button>
+            <button onclick="summonUFO()">Summon UFO</button>
+        </div>
+        <nav class="nav">
+            <a href="#" onclick="changeColor()">Shift Reality</a>
+            <a href="#" onclick="addMoreShapes()">Spawn Anomalies</a>
+            <a href="#" onclick="spinEverything()">COSMIC SPIN</a>
+        </nav>
+    </div>
+
+    <script>
+        // Create starfield
+        function createStars() {
+            const starfield = document.getElementById('starfield');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.animationDuration = Math.random() * 3 + 2 + 's';
+                starfield.appendChild(star);
+            }
+        }
+        createStars();
+
+        // Create floating shapes
+        function createShape() {
+            const shape = document.createElement('div');
+            shape.className = 'shape';
+            shape.style.width = Math.random() * 100 + 'px';
+            shape.style.height = shape.style.width;
+            shape.style.background = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`;
+            shape.style.left = Math.random() * 100 + 'vw';
+            shape.style.top = Math.random() * 100 + 'vh';
+            document.getElementById('shapes').appendChild(shape);
+        }
+
+        // Initialize with some shapes
+        for (let i = 0; i < 10; i++) {
+            createShape();
+        }
+
+        let weirdnessLevel = 0;
+        function makeItWeirder() {
+            weirdnessLevel++;
+            document.body.style.transform = `rotate(${Math.random() * 10 - 5}deg)`;
+            document.querySelector('.title').style.fontSize = (Math.random() * 2 + 4) + 'em';
+            
+            if (weirdnessLevel > 3) {
+                document.body.style.animation = 'glitch 0.3s infinite';
+                setTimeout(() => {
+                    document.body.style.animation = '';
+                }, 1000);
+            }
+        }
+
+        function changeColor() {
+            const hue = Math.random() * 360;
+            document.querySelectorAll('.shape').forEach(shape => {
+                shape.style.background = `hsla(${hue}, 70%, 50%, 0.5)`;
+            });
+            document.querySelector('.title').style.textShadow = `0 0 10px hsl(${hue}, 70%, 50%), 
+                0 0 20px hsl(${hue}, 70%, 50%), 
+                0 0 30px hsl(${hue}, 70%, 50%)`;
+        }
+
+        function addMoreShapes() {
+            for (let i = 0; i < 5; i++) {
+                createShape();
+            }
+        }
+
+        function spinEverything() {
+            document.querySelectorAll('.content, .nav, .title, .shape').forEach(element => {
+                element.style.transition = 'transform 1s';
+                element.style.transform = `rotate(${Math.random() * 360}deg) scale(${Math.random() + 0.5})`;
+            });
+        }
+
+        function summonUFO() {
+            const ufo = document.createElement('div');
+            ufo.className = 'ufo';
+            ufo.textContent = '🛸';
+            ufo.style.left = Math.random() * window.innerWidth + 'px';
+            ufo.style.top = Math.random() * window.innerHeight + 'px';
+            document.body.appendChild(ufo);
+            
+            let targetX = Math.random() * window.innerWidth;
+            let targetY = Math.random() * window.innerHeight;
+            
+            function moveUFO() {
+                targetX = Math.random() * window.innerWidth;
+                targetY = Math.random() * window.innerHeight;
+                ufo.style.left = targetX + 'px';
+                ufo.style.top = targetY + 'px';
+            }
+            
+            setInterval(moveUFO, 2000);
+        }
+
+        // Easter egg: Double click creates a cosmic explosion
+        document.addEventListener('dblclick', (e) => {
+            const colors = ['#ff00ff', '#00ffff', '#ff3366', '#33ff33'];
+            for (let i = 0; i < 20; i++) {
+                const shape = document.createElement('div');
+                shape.className = 'shape';
+                shape.style.width = '20px';
+                shape.style.height = '20px';
+                shape.style.background = colors[Math.floor(Math.random() * colors.length)];
+                shape.style.left = e.clientX + 'px';
+                shape.style.top = e.clientY + 'px';
+                document.getElementById('shapes').appendChild(shape);
+            }
+        });
+
+        // Random shooting stars
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.animationDuration = '1s';
+                document.getElementById('starfield').appendChild(star);
+                setTimeout(() => star.remove(), 1000);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
