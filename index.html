@@ -178,6 +178,140 @@
             user-select: none;
             filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.7));
         }
+        .breathwork-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.9); /* Changed to black background */
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 2rem auto;
+    max-width: 600px;
+}
+
+.breathwork-title {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.lungs-container {
+    width: 200px;
+    height: 200px;
+    margin: 2rem 0;
+}
+
+.lungs {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.lung {
+    fill: rgba(255, 255, 255, 0.2);
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 2;
+    transition: transform 0.5s ease;
+}
+
+.trachea {
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 2;
+    fill: none;
+}
+
+.timers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.timer {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.control-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.hold-btn {
+    background: rgba(128, 0, 128, 0.5);
+}
+
+.hold-btn:hover {
+    background: rgba(128, 0, 128, 0.7);
+}
+
+.record-btn {
+    background: rgba(255, 0, 0, 0.3);
+}
+
+.record-btn:hover {
+    background: rgba(255, 0, 0, 0.5);
+}
+
+.reset-btn {
+    background: rgba(255, 0, 0, 0.3);
+}
+
+.reset-btn:hover {
+    background: rgba(255, 0, 0, 0.5);
+}
+
+.score-display {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin: 1rem 0;
+    text-align: center;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.score-title {
+    color: white;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.score-details {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.score-details p {
+    margin: 0.5rem 0;
+}
+
+@keyframes breathe {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
 
         @keyframes glitch {
             0% { transform: translate(0); }
@@ -199,6 +333,50 @@
             <p>Where space and funk collide in digital harmony.</p>
             <button onclick="makeItWeirder()">Make it WEIRDER!</button>
             <button onclick="summonUFO()">Summon UFO</button>
+        </div>
+        <div id="breathwork-container" class="breathwork-section">
+            <h2 class="breathwork-title">Cosmic Breathwork</h2>
+            
+            <div class="lungs-container">
+                <svg viewBox="0 0 100 100" class="lungs">
+                    <!-- Left Lung -->
+                    <path class="lung" d="M45,30 Q30,50 30,70 Q30,85 45,90 Q60,85 60,70 Q60,50 45,30" />
+                    <!-- Right Lung -->
+                    <path class="lung" d="M55,30 Q70,50 70,70 Q70,85 55,90 Q40,85 40,70 Q40,50 55,30" />
+                    <!-- Trachea -->
+                    <path class="trachea" d="M50,10 L50,30" />
+                </svg>
+            </div>
+        
+            <div class="timers">
+                <div class="timer">Breath Time: <span id="breathTime">0:00</span></div>
+                <div class="timer" id="holdTimer" style="display: none">Hold Time: <span id="holdTime">0:00</span></div>
+            </div>
+        
+            <div class="score-display" id="scoreDisplay" style="display: none">
+                <h3 class="score-title">Final Results</h3>
+                <div class="score-details">
+                    <p>Breathing Duration: <span id="finalBreathTime">0:00</span></p>
+                    <p>Hold Duration: <span id="finalHoldTime">0:00</span></p>
+                </div>
+            </div>
+        
+            <div class="controls">
+                <button id="breathButton" class="control-btn">
+                    <span class="btn-icon">▶</span>
+                    <span class="btn-text">Start Breathing</span>
+                </button>
+                <button id="holdButton" class="control-btn hold-btn" style="display: none">
+                    Start Hold
+                </button>
+                <button id="recordButton" class="control-btn record-btn" style="display: none">
+                    End Breath Hold
+                </button>
+                <button id="resetButton" class="control-btn reset-btn">
+                    <span class="btn-icon">⭘</span>
+                    <span class="btn-text">Reset</span>
+                </button>
+            </div>
         </div>
         <nav class="nav">
             <a href="#" onclick="changeColor()">Shift Reality</a>
@@ -322,6 +500,149 @@
                 setTimeout(() => star.remove(), 1000);
             }
         }, 1000);
+
+        class BreathworkTimer {
+    constructor() {
+        this.breathTime = 0;
+        this.holdTime = 0;
+        this.isBreathing = false;
+        this.isHolding = false;
+        this.interval = null;
+        
+        // DOM elements
+        this.breathButton = document.getElementById('breathButton');
+        this.holdButton = document.getElementById('holdButton');
+        this.resetButton = document.getElementById('resetButton');
+        this.recordButton = document.getElementById('recordButton');
+        this.breathTimeDisplay = document.getElementById('breathTime');
+        this.holdTimeDisplay = document.getElementById('holdTime');
+        this.holdTimer = document.getElementById('holdTimer');
+        this.lungs = document.querySelectorAll('.lung');
+        this.scoreDisplay = document.getElementById('scoreDisplay');
+        this.finalBreathTime = document.getElementById('finalBreathTime');
+        this.finalHoldTime = document.getElementById('finalHoldTime');
+        
+        this.initializeEventListeners();
+    }
+
+    initializeEventListeners() {
+        this.breathButton.addEventListener('click', () => this.toggleBreathing());
+        this.holdButton.addEventListener('click', () => this.startHolding());
+        this.resetButton.addEventListener('click', () => this.resetAll());
+        this.recordButton.addEventListener('click', () => this.endHold());
+    }
+
+    formatTime(time) {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    toggleBreathing() {
+        if (!this.isBreathing && !this.isHolding) {
+            this.startBreathing();
+        } else {
+            this.pauseBreathing();
+        }
+    }
+
+    startBreathing() {
+        this.isBreathing = true;
+        this.breathButton.innerHTML = '<span class="btn-icon">⏸</span><span class="btn-text">Pause</span>';
+        this.holdButton.style.display = 'block';
+        this.scoreDisplay.style.display = 'none';
+        
+        this.interval = setInterval(() => {
+            this.breathTime++;
+            this.breathTimeDisplay.textContent = this.formatTime(this.breathTime);
+        }, 1000);
+
+        this.lungs.forEach(lung => {
+            lung.style.animation = 'breathe 4s infinite ease-in-out';
+        });
+    }
+
+    pauseBreathing() {
+        this.isBreathing = false;
+        this.breathButton.innerHTML = '<span class="btn-icon">▶</span><span class="btn-text">Start Breathing</span>';
+        clearInterval(this.interval);
+        
+        this.lungs.forEach(lung => {
+            lung.style.animation = 'none';
+        });
+    }
+
+    startHolding() {
+        this.isBreathing = false;
+        this.isHolding = true;
+        this.holdTimer.style.display = 'block';
+        this.holdButton.style.display = 'none';
+        this.breathButton.style.display = 'none';
+        this.recordButton.style.display = 'block';
+        
+        clearInterval(this.interval);
+        
+        this.lungs.forEach(lung => {
+            lung.style.animation = 'none';
+            lung.style.transform = 'scale(1.3)';
+        });
+        
+        this.interval = setInterval(() => {
+            this.holdTime++;
+            this.holdTimeDisplay.textContent = this.formatTime(this.holdTime);
+        }, 1000);
+    }
+
+    endHold() {
+        clearInterval(this.interval);
+        this.isHolding = false;
+        
+        // Update final times in the score display
+        this.finalBreathTime.textContent = this.formatTime(this.breathTime);
+        this.finalHoldTime.textContent = this.formatTime(this.holdTime);
+        
+        // Show score display
+        this.scoreDisplay.style.display = 'block';
+        
+        // Reset lungs
+        this.lungs.forEach(lung => {
+            lung.style.transform = 'scale(1)';
+        });
+        
+        // Hide the record button since we're done
+        this.recordButton.style.display = 'none';
+        
+        // Show reset button to start over
+        this.resetButton.style.display = 'block';
+    }
+
+    resetAll() {
+        this.isBreathing = false;
+        this.isHolding = false;
+        this.breathTime = 0;
+        this.holdTime = 0;
+        clearInterval(this.interval);
+        
+        this.breathTimeDisplay.textContent = this.formatTime(0);
+        this.holdTimeDisplay.textContent = this.formatTime(0);
+        this.breathButton.innerHTML = '<span class="btn-icon">▶</span><span class="btn-text">Start Breathing</span>';
+        this.breathButton.style.display = 'block';
+        this.holdButton.style.display = 'none';
+        this.holdTimer.style.display = 'none';
+        this.recordButton.style.display = 'none';
+        this.scoreDisplay.style.display = 'none';
+        
+        this.lungs.forEach(lung => {
+            lung.style.animation = 'none';
+            lung.style.transform = 'scale(1)';
+        });
+    }
+}
+
+// Initialize the timer when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new BreathworkTimer();
+});
     </script>
 </body>
 </html>
